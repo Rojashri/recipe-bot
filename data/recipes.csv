@@ -1,0 +1,13 @@
+title,ingredients,steps,time,cuisine,diet
+Paneer Butter Masala,"paneer, tomato, onion, butter, cream, garam masala, chili",Saute onion tomato spices; add paneer and cream.,30,indian,veg
+Palak Paneer,"spinach, paneer, onion, tomato, garlic, ginger, spices",Cook spinach; blend; simmer with paneer.,25,indian,veg
+Chana Masala,"chickpeas, onion, tomato, garlic, ginger, chili, garam masala",Cook onion tomato; add chickpeas and spices.,30,indian,veg
+Aglio e Olio,"spaghetti, garlic, olive oil, chili flakes, parsley, salt",Cook pasta; toss with garlic oil and chili.,15,italian,veg
+Veg Fried Rice,"rice, carrot, beans, peas, soy sauce, garlic, spring onion",Stir-fry veggies; add rice and sauce.,20,chinese,veg
+Chicken Curry,"chicken, onion, tomato, garlic, ginger, spices",Cook onion tomato; add chicken and simmer.,35,indian,non-veg
+Veg Pulao,"rice, peas, carrot, beans, cumin, garam masala",Cook spiced rice with vegetables.,25,indian,veg
+Tomato Soup,"tomato, onion, garlic, butter, cream, pepper",Simmer and blend; finish with cream.,20,american,veg
+Masala Omelette,"egg, onion, tomato, chili, coriander, salt",Beat eggs; cook with masala veggies.,10,indian,non-veg
+Vegan Buddha Bowl,"quinoa, chickpeas, avocado, cucumber, spinach, tahini",Cook quinoa; assemble with veggies and sauce.,20,mediterranean,vegan
+Tacos,"tortillas, beans, tomato, lettuce, cheese, salsa",Warm tortillas; fill with beans and toppings.,18,mexican,veg
+Stir-fry Tofu,"tofu, broccoli, bell pepper, soy sauce, garlic, ginger",Stir-fry tofu and veggies; add sauce.,22,chinese,vegan

@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+    <div id="app-root" data-sid="{{ sid }}"></div>
+
+    <div class="card shadow-sm">
+      <div class="card-body chat-window">
+        <div id="banner" class="alert alert-danger d-none" role="alert"></div>
+
+        <div id="chat" class="chat-area">
+          <div class="msg bot">
+            Hi! I’m <b>Mika</b> 👋 Tell me ingredients
+            (e.g., <em>paneer and tomato, veg, under 20 min</em>), or just say hello.
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <input id="msg" class="form-control" placeholder="Type your message..." autocomplete="off" />
+          <button id="send" type="button" class="btn btn-primary">
+            <span id="sendText">Send</span>
+            <span id="sendSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <small class="text-muted d-block mt-2">Session: {{ sid }}</small>
+  </div>
+</div>
+
+{% raw %}
+<script>
+// --- logger ---
+console.log("[Mika] script loaded");
+
+var chat = document.getElementById("chat");
+var input = document.getElementById("msg");
+var sendBtn = document.getElementById("send");
+var banner = document.getElementById("banner");
+var sendText = document.getElementById("sendText");
+var sendSpinner = document.getElementById("sendSpinner");
+var sid = document.getElementById("app-root").getAttribute("data-sid");
+
+function showBanner(msg) {
+  if (!banner) return;
+  banner.textContent = msg;
+  banner.classList.remove("d-none");
+  setTimeout(function () { banner.classList.add("d-none"); }, 3000);
+}
+
+// returns the bubble DOM node so we can attach inline chips
+function addMsg(text, who) {
+  var bubble = document.createElement("div");
+  bubble.className = "msg " + (who === "user" ? "user" : "bot");
+  if (who === "bot") {
+    try { bubble.innerHTML = marked.parse(text); } catch(e) { bubble.textContent = text; }
+  } else {
+    bubble.textContent = text;
+  }
+  chat.appendChild(bubble);
+  chat.scrollTop = chat.scrollHeight;
+  return bubble;
+}
+
+function addCards(results) {
+  if (!results || !results.length) return;
+  var wrap = document.createElement("div");
+  wrap.className = "row g-3 mt-1";
+  for (var i = 0; i < results.length; i++) {
+    var r = results[i];
+    var col = document.createElement("div");
+    col.className = "col-md-6";
+    var meta = "";
+    if (r.time) meta += r.time + " min · ";
+    if (r.cuisine) meta += r.cuisine;
+    if (r.cuisine && r.diet) meta += " · ";
+    if (r.diet) meta += r.diet;
+    col.innerHTML =
+      '<div class="card recipe-card h-100 hoverable" data-title="' + r.title + '">' +
+        '<div class="card-body">' +
+          '<h6 class="card-title mb-1">' + r.title + '</h6>' +
+          '<div class="text-muted small mb-2">' + meta + '</div>' +
+        '</div>' +
+      '</div>';
+    col.querySelector(".recipe-card").addEventListener("click", (function(title){
+      return function(){ sendMessage(title); };
+    })(r.title));
+    wrap.appendChild(col);
+  }
+  chat.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+// NEW: inline quick-reply chips INSIDE a given bot bubble
+function addInlineConfirmChips(targetBubble) {
+  if (!targetBubble) return;
+  var chips = document.createElement("div");
+  chips.className = "inline-actions";
+  chips.innerHTML =
+    '<button class="chip chip-primary">👍 Helpful</button>' +
+    '<button class="chip">👎 Not helpful</button>' +
+    '<button class="chip chip-ghost">Copy</button>';
+
+  var buttons = chips.querySelectorAll("button");
+  // Cook / Helpful → show label, send "yes"
+  buttons[0].addEventListener("click", function(){ 
+    addMsg("👍 Helpful", "user");   // user bubble shows label
+    sendAction("yes");              // backend gets yes
+  });
+
+// See other options / Not helpful → show label, send "no"
+  buttons[1].addEventListener("click", function(){ 
+    addMsg("👎 Not helpful", "user");
+    sendAction("no");
+  });
+  // Copy → copy text of this bubble + show visual feedback
+  buttons[2].addEventListener("click", function () {
+    var text = targetBubble.innerText || targetBubble.textContent || "";
+    if (!text) return;
+
+    var copyBtn = buttons[2];
+    function showCopied() {
+      var old = copyBtn.textContent;
+      copyBtn.textContent = "✓ Copied";
+      copyBtn.classList.add("copied");        // style feedback
+      copyBtn.disabled = true;
+      setTimeout(function () {
+        copyBtn.textContent = "Copy";
+        copyBtn.classList.remove("copied");
+        copyBtn.disabled = false;
+      }, 1200);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(showCopied).catch(function () {
+        showBanner("Couldn’t copy.");
+      });
+    } else {
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        showCopied();
+      } catch (e) {
+        showBanner("Couldn’t copy.");
+      }
+    }
+  });
+
+
+  targetBubble.appendChild(chips);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function setLoading(isLoading) {
+  if (!sendBtn) return;
+  sendBtn.disabled = !!isLoading;
+  if (sendText) sendText.classList[isLoading ? "add" : "remove"]("d-none");
+  if (sendSpinner) sendSpinner.classList[isLoading ? "remove" : "add"]("d-none");
+}
+
+// GLOBAL sender
+function sendMessage(textOverride) {
+  var base = "";
+  if (typeof textOverride === "string" && textOverride.trim().length > 0) base = textOverride;
+  else base = (input && input.value) ? input.value : "";
+  var text = (base || "").trim();
+  if (!text) return;
+
+  addMsg(text, "user");
+  if (input) input.value = "";
+  setLoading(true);
+
+  fetch("/chat", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ sid: sid, message: text })
+  })
+  .then(function(r){
+    if (!r.ok) {
+      showBanner("Server error (" + r.status + ").");
+      addMsg("Sorry, something went wrong.", "bot");
+      throw new Error("HTTP " + r.status);
+    }
+    return r.json();
+  })
+  .then(function(data){
+    // add bot reply and keep a handle to the bubble
+    var botBubble = addMsg(data.reply || "Sorry, something went wrong.", "bot");
+    if (data.results && data.results.length) addCards(data.results);
+    if (data.state && data.state.toLowerCase() === "confirm") {
+      // show chips inline inside the same bubble with the recipe
+      addInlineConfirmChips(botBubble);
+    }
+  })
+  .catch(function(e){
+    console.error(e);
+    showBanner("Network error. Is the Flask server running?");
+    addMsg("Network error. Is the Flask server running?", "bot");
+  })
+  .finally(function(){
+    setLoading(false);
+    if (input) input.focus();
+  });
+}
+
+function sendAction(text) {
+  setLoading(true);
+  fetch("/chat", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ sid: sid, message: text })
+  })
+  .then(function(r){ if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(function(data){
+    var botBubble = addMsg(data.reply || "Sorry, something went wrong.", "bot");
+    if (data.results && data.results.length) addCards(data.results);
+    if (data.state && data.state.toLowerCase() === "confirm") {
+      addInlineConfirmChips(botBubble);
+    }
+  })
+  .catch(function(e){
+    console.error(e);
+    showBanner("Network error. Is the Flask server running?");
+    addMsg("Network error. Is the Flask server running?", "bot");
+  })
+  .finally(function(){ setLoading(false); if (input) input.focus(); });
+}
+
+// Bind listeners
+if (sendBtn) sendBtn.addEventListener("click", function(){ sendMessage(); });
+if (input)   input.addEventListener("keydown", function(e){ if (e.key === "Enter") { e.preventDefault(); sendMessage(); } });
+
+console.log("[Mika] script ready");
+</script>
+{% endraw %}
+{% endblock %}
