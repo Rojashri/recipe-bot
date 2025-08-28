@@ -11,7 +11,7 @@
         <div id="chat" class="chat-area">
           <div class="msg bot">
             Hi! I’m <b>Mika</b> 👋 Tell me ingredients
-            (e.g., <em>paneer and tomato, veg, under 20 min</em>), or just say hello.
+            (e.g., <em>paneer and tomato, veg/non-veg, under 20 min</em>), or just say hello.
           </div>
         </div>
 
@@ -34,6 +34,7 @@
 // --- logger ---
 console.log("[Mika] script loaded");
 
+// DOM refs
 var chat = document.getElementById("chat");
 var input = document.getElementById("msg");
 var sendBtn = document.getElementById("send");
@@ -42,6 +43,7 @@ var sendText = document.getElementById("sendText");
 var sendSpinner = document.getElementById("sendSpinner");
 var sid = document.getElementById("app-root").getAttribute("data-sid");
 
+// ---------------- UI helpers ----------------
 function showBanner(msg) {
   if (!banner) return;
   banner.textContent = msg;
@@ -49,7 +51,6 @@ function showBanner(msg) {
   setTimeout(function () { banner.classList.add("d-none"); }, 3000);
 }
 
-// returns the bubble DOM node so we can attach inline chips
 function addMsg(text, who) {
   var bubble = document.createElement("div");
   bubble.className = "msg " + (who === "user" ? "user" : "bot");
@@ -63,6 +64,30 @@ function addMsg(text, who) {
   return bubble;
 }
 
+function setLoading(isLoading) {
+  if (!sendBtn) return;
+  sendBtn.disabled = !!isLoading;
+  if (sendText) sendText.classList[isLoading ? "add" : "remove"]("d-none");
+  if (sendSpinner) sendSpinner.classList[isLoading ? "remove" : "add"]("d-none");
+}
+
+// After chat closes: lock input and swap button to "New chat"
+function endChatUI() {
+  if (input) {
+    input.disabled = true;
+    input.value = "";
+    input.placeholder = "Chat ended. Click New chat to start again.";
+  }
+  if (sendText) sendText.textContent = "New chat";
+  if (sendSpinner) sendSpinner.classList.add("d-none");
+  if (sendBtn) {
+    sendBtn.disabled = false;
+    // replace handlers with a reload
+    sendBtn.onclick = function(){ window.location.reload(); };
+  }
+}
+
+// ---------------- cards (old flow) ----------------
 function addCards(results) {
   if (!results || !results.length) return;
   var wrap = document.createElement("div");
@@ -92,7 +117,7 @@ function addCards(results) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-// NEW: inline quick-reply chips INSIDE a given bot bubble
+// ---------------- inline chips ----------------
 function addInlineConfirmChips(targetBubble) {
   if (!targetBubble) return;
   var chips = document.createElement("div");
@@ -103,27 +128,27 @@ function addInlineConfirmChips(targetBubble) {
     '<button class="chip chip-ghost">Copy</button>';
 
   var buttons = chips.querySelectorAll("button");
-  // Cook / Helpful → show label, send "yes"
-  buttons[0].addEventListener("click", function(){ 
-    addMsg("👍 Helpful", "user");   // user bubble shows label
-    sendAction("yes");              // backend gets yes
+
+  // Helpful → user bubble + send "yes"
+  buttons[0].addEventListener("click", function(){
+    addMsg("👍 Helpful", "user");
+    sendAction("yes");
   });
 
-// See other options / Not helpful → show label, send "no"
-  buttons[1].addEventListener("click", function(){ 
+  // Not helpful → user bubble + send "no"
+  buttons[1].addEventListener("click", function(){
     addMsg("👎 Not helpful", "user");
     sendAction("no");
   });
-  // Copy → copy text of this bubble + show visual feedback
+
+  // Copy with inline feedback
   buttons[2].addEventListener("click", function () {
     var text = targetBubble.innerText || targetBubble.textContent || "";
     if (!text) return;
-
     var copyBtn = buttons[2];
     function showCopied() {
-      var old = copyBtn.textContent;
       copyBtn.textContent = "✓ Copied";
-      copyBtn.classList.add("copied");        // style feedback
+      copyBtn.classList.add("copied");
       copyBtn.disabled = true;
       setTimeout(function () {
         copyBtn.textContent = "Copy";
@@ -131,39 +156,39 @@ function addInlineConfirmChips(targetBubble) {
         copyBtn.disabled = false;
       }, 1200);
     }
-
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(showCopied).catch(function () {
-        showBanner("Couldn’t copy.");
-      });
+      navigator.clipboard.writeText(text).then(showCopied).catch(function(){ showBanner("Couldn’t copy."); });
     } else {
       try {
         var ta = document.createElement("textarea");
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
+        ta.value = text; document.body.appendChild(ta);
+        ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
         showCopied();
-      } catch (e) {
-        showBanner("Couldn’t copy.");
-      }
+      } catch(e){ showBanner("Couldn’t copy."); }
     }
   });
-
 
   targetBubble.appendChild(chips);
   chat.scrollTop = chat.scrollHeight;
 }
 
-function setLoading(isLoading) {
-  if (!sendBtn) return;
-  sendBtn.disabled = !!isLoading;
-  if (sendText) sendText.classList[isLoading ? "add" : "remove"]("d-none");
-  if (sendSpinner) sendSpinner.classList[isLoading ? "remove" : "add"]("d-none");
+// ---------------- network senders ----------------
+function handleResponse(data) {
+  // add bot reply and any result cards
+  var botBubble = addMsg(data.reply || "Sorry, something went wrong.", "bot");
+  if (data.results && data.results.length) addCards(data.results);
+
+  // chips only in confirm step
+  if (data.state && data.state.toLowerCase() === "confirm") {
+    addInlineConfirmChips(botBubble);
+  }
+
+  // close UI if backend says CLOSED
+  if (data.state && data.state.toLowerCase() === "closed") {
+    endChatUI();
+  }
 }
 
-// GLOBAL sender
 function sendMessage(textOverride) {
   var base = "";
   if (typeof textOverride === "string" && textOverride.trim().length > 0) base = textOverride;
@@ -188,15 +213,7 @@ function sendMessage(textOverride) {
     }
     return r.json();
   })
-  .then(function(data){
-    // add bot reply and keep a handle to the bubble
-    var botBubble = addMsg(data.reply || "Sorry, something went wrong.", "bot");
-    if (data.results && data.results.length) addCards(data.results);
-    if (data.state && data.state.toLowerCase() === "confirm") {
-      // show chips inline inside the same bubble with the recipe
-      addInlineConfirmChips(botBubble);
-    }
-  })
+  .then(handleResponse)
   .catch(function(e){
     console.error(e);
     showBanner("Network error. Is the Flask server running?");
@@ -204,10 +221,11 @@ function sendMessage(textOverride) {
   })
   .finally(function(){
     setLoading(false);
-    if (input) input.focus();
+    if (input && !input.disabled) input.focus();
   });
 }
 
+// silent sender for inline chips
 function sendAction(text) {
   setLoading(true);
   fetch("/chat", {
@@ -216,22 +234,16 @@ function sendAction(text) {
     body: JSON.stringify({ sid: sid, message: text })
   })
   .then(function(r){ if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-  .then(function(data){
-    var botBubble = addMsg(data.reply || "Sorry, something went wrong.", "bot");
-    if (data.results && data.results.length) addCards(data.results);
-    if (data.state && data.state.toLowerCase() === "confirm") {
-      addInlineConfirmChips(botBubble);
-    }
-  })
+  .then(handleResponse)
   .catch(function(e){
     console.error(e);
     showBanner("Network error. Is the Flask server running?");
     addMsg("Network error. Is the Flask server running?", "bot");
   })
-  .finally(function(){ setLoading(false); if (input) input.focus(); });
+  .finally(function(){ setLoading(false); if (input && !input.disabled) input.focus(); });
 }
 
-// Bind listeners
+// ---------------- bindings ----------------
 if (sendBtn) sendBtn.addEventListener("click", function(){ sendMessage(); });
 if (input)   input.addEventListener("keydown", function(e){ if (e.key === "Enter") { e.preventDefault(); sendMessage(); } });
 
