@@ -11,3 +11,75 @@ Masala Omelette,"egg, onion, tomato, chili, coriander, salt",Beat eggs; cook wit
 Vegan Buddha Bowl,"quinoa, chickpeas, avocado, cucumber, spinach, tahini",Cook quinoa; assemble with veggies and sauce.,20,mediterranean,vegan
 Tacos,"tortillas, beans, tomato, lettuce, cheese, salsa",Warm tortillas; fill with beans and toppings.,18,mexican,veg
 Stir-fry Tofu,"tofu, broccoli, bell pepper, soy sauce, garlic, ginger",Stir-fry tofu and veggies; add sauce.,22,chinese,vegan
+Paneer Tikka,"paneer, yogurt, ginger garlic paste, chili powder, garam masala, lemon, capsicum, onion, oil, salt",Marinate paneer and veggies with spiced yogurt; skewer; grill or roast until charred.,25,indian,veg
+Dal Tadka,"toor dal, onion, tomato, garlic, cumin, mustard, turmeric, ghee, chili, coriander","Pressure cook dal; temper ghee with cumin, mustard, garlic and chili; mix with dal and simmer.",30,indian,veg
+Rajma Masala,"kidney beans, onion, tomato, ginger, garlic, chili, garam masala, cumin, oil, salt",Cook soaked rajma; make onion‑tomato masala; simmer with spices until thick.,40,indian,veg
+Aloo Gobi,"potato, cauliflower, onion, tomato, ginger, turmeric, cumin, coriander powder, chili, oil, salt",Sauté spices; add potatoes and cauliflower; cook covered until tender.,25,indian,veg
+Bhindi Masala,"okra, onion, tomato, cumin, chili, coriander powder, amchur, oil, salt",Stir‑fry okra separately; cook onion‑tomato masala; combine and finish with amchur.,22,indian,veg
+Baingan Bharta,"eggplant, onion, tomato, garlic, green chili, cumin, oil, coriander",Roast eggplant; mash; cook with onion‑tomato‑spice base until smoky.,30,indian,veg
+Veg Biryani,"basmati rice, mixed vegetables, yogurt, fried onion, biryani masala, saffron, mint, ghee, whole spices",Parboil rice; layer with spiced veggies and fried onion; dum cook until aromatic.,45,indian,veg
+Kadai Paneer,"paneer, onion, tomato, capsicum, kadai masala, ginger, garlic, oil, kasuri methi, salt",Roast kadai masala; stir‑fry onion and capsicum; add tomato gravy and paneer; finish with methi.,25,indian,veg
+Matar Paneer,"paneer, green peas, onion, tomato, ginger, garlic, garam masala, chili, oil, salt",Cook onion‑tomato gravy; add peas and paneer; simmer until peas are tender.,25,indian,veg
+Malai Kofta,"paneer, potato, cream, cashew, onion, tomato, garam masala, chili, oil, salt",Fry kofta balls; make rich cashew‑tomato gravy; simmer koftas briefly.,40,indian,veg
+Sambar,"toor dal, tamarind, mixed vegetables, sambar powder, mustard, curry leaves, oil, salt",Cook dal; boil veggies with tamarind; add sambar powder; temper with mustard and curry leaves.,30,indian,veg
+Dosa,"rice, urad dal, fenugreek, salt, oil",Soak and grind batter; ferment; spread on tawa; cook crisp with oil.,20,indian,veg
+Pav Bhaji,"potato, cauliflower, peas, capsicum, onion, tomato, pav bhaji masala, butter, lemon, coriander",Mash boiled veggies with masala and butter; toast pav; serve with lemon.,28,indian,veg
+Poha,"flattened rice, onion, potato, green chili, mustard, curry leaves, turmeric, peanuts, lemon",Temper mustard and curry leaves; sauté onion and potato; toss poha and finish with lemon.,15,indian,veg
+Upma,"semolina, onion, green chili, ginger, mustard, curry leaves, vegetables, ghee, salt",Roast semolina; temper spices; add veggies and water; cook to thick porridge.,18,indian,veg
+Jeera Rice,"basmati rice, cumin, ghee, bay leaf, salt",Temper cumin in ghee; add cooked rice; toss fragrant.,12,indian,veg
+Palak Corn,"spinach, sweet corn, onion, tomato, garlic, garam masala, cream, oil, salt",Blanch and puree spinach; cook with corn and spices; finish with cream.,20,indian,veg
+Tawa Pulao,"rice, onion, tomato, capsicum, pav bhaji masala, peas, butter, lemon, coriander",Stir‑fry veggies with masala; toss rice and finish with butter and lemon.,18,indian,veg
+Kadhi Pakora,"gram flour, yogurt, onion, chili, turmeric, cumin, mustard, curry leaves, oil, salt",Make pakoras; simmer yogurt‑besan kadhi; temper with spices and add pakoras.,35,indian,veg
+Veg Korma,"mixed vegetables, coconut, cashew, onion, tomato, korma masala, poppy seeds, oil, salt",Blend coconut‑cashew; cook veggies in spiced gravy until creamy.,30,indian,veg
+Chicken Biryani,"basmati rice, chicken, fried onion, yogurt, biryani masala, saffron, mint, ghee, whole spices",Marinate chicken; layer with parboiled rice and fried onion; dum cook.,50,indian,non-veg
+Tandoori Chicken,"chicken, yogurt, tandoori masala, lemon, ginger garlic paste, oil, salt",Marinate chicken; roast or grill until charred and cooked through.,35,indian,non-veg
+Egg Curry,"eggs, onion, tomato, ginger, garlic, chili, garam masala, oil, salt",Boil eggs; cook onion‑tomato masala; simmer eggs in gravy.,25,indian,non-veg
+Goan Fish Curry,"firm fish, coconut milk, tamarind, onion, tomato, kokum (optional), chili, spices, oil, salt",Simmer fish in spiced coconut gravy with tamarind until just cooked.,22,indian,non-veg
+Prawn Masala,"prawns, onion, tomato, ginger, garlic, chili, garam masala, oil, salt",Sauté masala; add prawns; cook briefly until pink.,18,indian,non-veg
+Margherita Pizza,"pizza dough, tomato sauce, mozzarella, basil, olive oil, salt",Stretch dough; top with sauce and mozzarella; bake; finish with basil and oil.,20,italian,veg
+Spaghetti Bolognese,"spaghetti, minced meat, onion, carrot, celery, tomato, garlic, olive oil, herbs, salt",Sauté soffritto; brown meat; add tomato and simmer; toss with pasta.,35,italian,non-veg
+Mushroom Risotto,"arborio rice, mushrooms, onion, garlic, butter, stock, parmesan, white wine, parsley","Toast rice; add wine; add stock gradually, stirring; finish with butter and parmesan.",30,italian,veg
+Penne Arrabbiata,"penne, tomato, garlic, chili flakes, olive oil, parsley, salt",Cook pasta; simmer garlicky chili‑tomato sauce; toss together.,18,italian,veg
+Pesto Pasta,"pasta, basil, pine nuts, garlic, parmesan, olive oil, salt",Blend pesto; toss with hot pasta and pasta water.,15,italian,veg
+Chicken Alfredo Pasta,"fettuccine, chicken, cream, butter, garlic, parmesan, pepper, salt",Sear chicken; make creamy garlic sauce; toss with pasta.,22,italian,non-veg
+Hummus,"chickpeas, tahini, lemon, garlic, olive oil, cumin, salt",Blend all until smooth; adjust lemon and salt; drizzle oil.,10,mediterranean,vegan
+Falafel,"chickpeas, onion, garlic, parsley, cumin, coriander, flour, baking powder, oil, salt",Blend coarse mixture; shape and fry until crisp.,25,mediterranean,vegan
+Tabbouleh,"bulgur, parsley, mint, tomato, cucumber, lemon, olive oil, salt",Hydrate bulgur; toss with chopped herbs and vegetables; dress with lemon oil.,15,mediterranean,vegan
+Shakshuka,"eggs, tomato, onion, bell pepper, garlic, cumin, paprika, olive oil, salt",Simmer spiced tomato‑pepper base; poach eggs on top.,20,mediterranean,non-veg
+Greek Salad,"cucumber, tomato, red onion, olives, feta, oregano, olive oil, lemon, salt",Chop veggies; toss with feta and oregano‑lemon dressing.,10,mediterranean,veg
+Veg Quesadilla,"tortillas, bell pepper, onion, corn, beans, cheese, chili powder, oil, salt",Sauté filling; add cheese in tortillas; toast until melted.,12,mexican,veg
+Beef Tacos,"tortillas, minced beef, onion, tomato, chili powder, cumin, lettuce, salsa, cheese, oil, salt",Brown beef with spices; fill tortillas; top with salsa and lettuce.,15,mexican,non-veg
+Guacamole,"avocado, onion, tomato, lime, cilantro, jalapeño, salt",Mash avocado; fold in chopped veg and lime; season.,8,mexican,vegan
+Vegetable Enchiladas,"tortillas, mixed vegetables, beans, enchilada sauce, cheese, spices, oil, salt",Roll veggie‑bean filling; cover with sauce and cheese; bake.,28,mexican,veg
+Chicken Fajitas,"chicken, bell pepper, onion, chili powder, cumin, lime, tortillas, oil, salt",Sear seasoned chicken and peppers; serve with warm tortillas.,18,mexican,non-veg
+Veg Hakka Noodles,"noodles, cabbage, carrot, bell pepper, soy sauce, vinegar, garlic, spring onion, oil, pepper",Stir‑fry veggies; toss boiled noodles with sauces over high heat.,15,chinese,veg
+Chicken Fried Rice,"rice, chicken, egg, peas, carrot, soy sauce, garlic, spring onion, oil, pepper",Stir‑fry chicken; add rice and vegetables; season with soy and pepper.,16,chinese,non-veg
+Mapo Tofu,"tofu, minced meat, doubanjiang, garlic, ginger, Sichuan pepper, soy sauce, stock, oil",Simmer tofu in spicy bean paste gravy with minced meat.,20,chinese,non-veg
+General Tso’s Tofu,"tofu, corn starch, soy sauce, vinegar, sugar, garlic, chili, sesame, oil",Crisp tofu; toss in tangy‑spicy sauce; garnish sesame.,18,chinese,vegan
+Veg Manchurian,"cabbage, carrot, capsicum, flour, cornflour, soy sauce, chili sauce, garlic, oil, salt",Fry veg balls; simmer in spicy soy‑garlic gravy.,25,chinese,veg
+Pad Thai (Veg),"rice noodles, tofu, egg (optional), tamarind, palm sugar, fish sauce/soy, peanut, bean sprout, garlic",Soak noodles; stir‑fry sauce with tofu; toss noodles; top sprouts and peanuts.,20,thai,veg
+Tom Yum Soup,"stock, lemongrass, galangal, kaffir lime leaves, chili, mushroom, fish sauce/soy, lime",Simmer aromatics; add mushrooms; season sour‑spicy; finish with lime.,18,thai,veg
+Veg Ramen,"ramen noodles, vegetable stock, soy sauce, miso, mushroom, bok choy, corn, spring onion, sesame",Simmer broth with miso/soy; add toppings; cook noodles separately and combine.,25,japanese,veg
+Sushi Veg Roll,"sushi rice, nori, cucumber, avocado, carrot, rice vinegar, sugar, salt, soy sauce",Spread rice on nori; add fillings; roll tightly and slice.,22,japanese,veg
+Bibimbap (Veg),"rice, spinach, carrot, zucchini, mushrooms, gochujang, sesame oil, egg/tofu",Sauté toppings; arrange on rice; add gochujang; top with egg or tofu.,25,korean,veg
+Kimchi Fried Rice,"rice, kimchi, gochujang, spring onion, sesame oil, egg/tofu",Stir‑fry kimchi with rice and gochujang; top with egg or tofu.,15,korean,veg
+Ratatouille,"eggplant, zucchini, bell pepper, tomato, onion, garlic, thyme, olive oil, salt",Slice and stew vegetables with herbs until tender.,30,french,vegan
+Gazpacho,"tomato, cucumber, bell pepper, onion, garlic, olive oil, sherry vinegar, bread, salt",Blend chilled raw vegetables and season; serve cold.,12,spanish,vegan
+Spanish Omelette,"egg, potato, onion, olive oil, salt",Slow‑fry potato and onion; bind with egg; set into a tortilla.,22,spanish,non-veg
+Minestrone Soup,"beans, pasta, tomato, celery, carrot, onion, stock, herbs, olive oil, salt","Sauté vegetables; add stock, beans, pasta; simmer until tender.",28,italian,veg
+Shepherd’s Pie,"minced lamb/beef, onion, carrot, peas, gravy, mashed potato, butter",Cook meat filling; top with mash; bake until browned.,40,british,non-veg
+Fish and Chips,"white fish, flour, baking powder, beer/water, potato, oil, salt",Batter and fry fish; fry chips until crisp; season.,30,british,non-veg
+Rösti with Mushrooms,"potato, butter/oil, salt, pepper, mushrooms, garlic, parsley",Grate potato and pan‑fry into a cake; sauté mushrooms; serve together.,20,swiss,veg
+Caponata,"eggplant, celery, onion, tomato, capers, olives, vinegar, sugar, olive oil, salt",Fry eggplant; simmer sweet‑sour vegetable relish; serve warm or cold.,30,italian,vegan
+Penne Puttanesca,"penne, tomato, garlic, olive, capers, anchovy (optional), chili, olive oil",Simmer pungent tomato sauce; toss with pasta.,18,italian,veg
+Caesar Salad,"romaine, croutons, parmesan, anchovy, garlic, lemon, olive oil, egg/yogurt",Blend dressing; toss with lettuce and croutons; shave parmesan.,12,american,non-veg
+Veg Chili,"kidney beans, black beans, tomato, onion, bell pepper, chili powder, cumin, garlic, oil, salt",Simmer beans with spiced tomato base until thick.,35,american,vegan
+Grilled Cheese Sandwich,"bread, cheddar, butter",Butter bread; grill with cheese until melty and crisp.,8,american,veg
+Roasted Veggies & Quinoa,"quinoa, bell pepper, zucchini, carrot, broccoli, olive oil, herbs, lemon, salt",Roast vegetables; cook quinoa; toss with lemon and herbs.,28,american,vegan
+Lentil Soup,"lentils, onion, carrot, celery, garlic, tomato, cumin, stock, olive oil, salt",Sauté aromatics; simmer lentils in stock until tender.,30,global,vegan
+Couscous Salad,"couscous, chickpeas, cucumber, tomato, parsley, lemon, olive oil, salt",Steam couscous; toss with vegetables and lemon‑oil dressing.,12,mediterranean,vegan
+Veg Queso-less Nachos,"tortilla chips, beans, pico de gallo, guacamole, jalapeño, corn",Layer chips with warm beans and toppings; serve immediately.,10,mexican,vegan
+Stuffed Bell Peppers,"bell peppers, rice, beans/meat, onion, tomato, spices, cheese (optional)",Stuff peppers with filling; bake until tender.,30,global,veg
+Tofu Stir-fry,"tofu, broccoli, bell pepper, soy sauce, garlic, ginger, cornflour, oil",Crisp tofu; stir‑fry vegetables; glaze with soy‑garlic sauce.,18,chinese,vegan
+Miso Glazed Eggplant,"eggplant, miso, mirin, sugar, sesame, oil",Roast eggplant; brush miso glaze; broil until caramelized.,20,japanese,vegan
+Avocado Toast,"bread, avocado, lemon, chili flakes, salt, pepper, olive oil",Toast bread; mash avocado with lemon; spread and top.,6,american,vegan
