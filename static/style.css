@@ -1,142 +1,46 @@
-/* ===== Background ===== */
+/* App scaffold */
 body {
-  background: linear-gradient(135deg, #c7d2fe 0%, #e0f2fe 50%, #fce7f3 100%);
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  background: radial-gradient(1200px 600px at 20% -20%, #dbeafe 0%, #f1f5f9 35%, #f8fafc 100%),
+              radial-gradient(1200px 700px at 120% 20%, #fde2f2 0%, transparent 50%);
+  font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
   color: #111827;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 20px;
-  min-height: 100vh;
 }
 
-/* ===== Navbar ===== */
-.navbar-dark {
-  background: linear-gradient(90deg, #0f172a, #1e293b) !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-  border-radius: 0 0 12px 12px;
-}
+/* Navbar */
+.app-nav { background: linear-gradient(90deg, #0f172a, #1e293b); }
 
-/* ===== Chat Container ===== */
-.chat-window {
-  max-width: 800px;
-  border-radius: 24px;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(18px);
-  border: 1px solid rgba(255,255,255,0.6);
-  box-shadow: 0 20px 48px rgba(0,0,0,0.2);
-  padding: 8px;
-}
-
-/* Internal scroll so page doesn't expand */
+/* Cards / chat container */
+.chat-window { min-height: 68vh; }
 .chat-area {
-  height: 70vh;          /* key: fixed height */
-  overflow-y: auto;      /* key: internal scrolling */
-  background: transparent;
-  padding: 20px;
-  border-radius: 20px;
-  border: none;
-}
-
-/* ===== Bubbles ===== */
-.msg {
-  padding: 12px 16px;
-  border-radius: 18px;
-  margin: 8px 0;
-  max-width: 78%;
-  line-height: 1.45;
-  animation: fadeIn 0.25s ease;
-}
-.msg.user {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: #fff;
-  margin-left: auto;
-  box-shadow: 0 4px 12px rgba(59,130,246,0.35);
-}
-.msg.bot {
-  background: linear-gradient(135deg, #fdfcff, #eef2ff);
-  color: #111827;
-  margin-right: auto;
-  border: 1px solid #e0e7ff;
-  box-shadow: 0 3px 8px rgba(99,102,241,0.15);
-}
-
-/* Fade animation */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== Recipe Cards (old flow) ===== */
-.recipe-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
+  min-height: 56vh;
+  max-height: 70vh;
+  overflow-y: auto;
   background: #fff;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-.recipe-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-  border-color: #3b82f6;
-}
-.hoverable { cursor: pointer; }
-
-/* ===== Input Row ===== */
-#msg.form-control {
-  border-radius: 999px;
-  padding: 12px 18px;
-  border: 1px solid #d1d5db;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,.05);
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-#msg.form-control:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59,130,246,.25);
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
 }
 
-#send.btn {
-  border-radius: 999px;
-  padding: 12px 22px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  border: none;
-  color: #fff;
-  font-weight: 500;
-  box-shadow: 0 4px 10px rgba(37,99,235,0.4);
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
-}
-#send.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(37,99,235,0.5);
-}
+/* Bubbles */
+.msg { padding: 12px 14px; border-radius: 16px; margin: 8px 0; max-width: 85%; line-height: 1.45; box-shadow: 0 1px 2px rgba(16,24,40,.06); }
+.msg.user { margin-left: auto; background: linear-gradient(135deg,#3b82f6,#2563eb); color:#fff; }
+.msg.bot  { background: #f3f4f6; }
 
-/* ===== Inline Chips ===== */
-.inline-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 12px;
-}
-.chip {
-  border: none;
-  background: #f3f4f6;
-  color: #1f2937;
-  border-radius: 999px;
-  padding: 6px 16px;
-  font-size: 0.85rem;
-  line-height: 1.2;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.chip:hover { background: #e5e7eb; box-shadow: 0 2px 6px rgba(0,0,0,.1); transform: translateY(-1px); }
-.chip:active { transform: translateY(0); }
-.chip-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; }
-.chip-primary:hover { filter: brightness(1.05); }
-.chip-ghost { background: #eef2ff; color: #1d4ed8; }
+/* Recipe cards */
+.recipe-card { border: 1px solid #e5e7eb; border-radius: 14px; }
+.hoverable { transition: transform .08s ease, box-shadow .12s ease; cursor: pointer; }
+.hoverable:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,24,40,.08); }
 
-/* Copy chip success */
-.chip.copied {
-  background: #eaf9ee;
-  color: #166534;
-  outline: 1px solid #b7e4c7;
-}
+/* Input row */
+#msg.form-control { border-radius: 999px; padding: 14px 16px; }
+#msg.form-control:focus { box-shadow: 0 0 0 4px rgba(59,130,246,.2); border-color:#3b82f6; }
+#send.btn { border-radius: 999px; padding: 12px 20px; }
+
+/* Chips under recipe */
+.inline-actions{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+.chip{ border:1px solid #d6dbe6; background:#fff; border-radius:999px; padding:6px 12px; font-size:.85rem; cursor:pointer; }
+.chip-primary{ background:linear-gradient(135deg,#3b82f6,#2563eb); color:#fff; border-color:transparent; }
+.chip.copied{ background:#eaf9ee; color:#166534; border-color:#b7e4c7; }
+
+/* Sidebar titles */
+.ellipsis{ display:inline-block; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

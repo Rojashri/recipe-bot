@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-3">
+  <!-- Sidebar -->
+  <aside class="col-12 col-md-3 col-lg-2">
+    <div class="card shadow-sm h-100">
+      <div class="card-body p-2">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h6 class="mb-0">Chats</h6>
+          <button id="newChat" class="btn btn-sm btn-primary" title="New chat">+</button>
+        </div>
+
+        <div id="chatList" class="list-group small">
+          {% if current_user.is_authenticated %}
+            {% for s in sessions %}
+              <a href="#" class="list-group-item list-group-item-action" data-sid="{{ s.id }}">
+                {{ s.title or "New chat" }}
+              </a>
+            {% else %}
+              <div class="text-muted p-2">No chats yet.</div>
+            {% endfor %}
+          {% else %}
+            <!-- guest list is injected by JS -->
+            <div id="guestList"></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Chat area -->
+  <section class="col-12 col-md-9 col-lg-10">
+    <div id="app-root"
+         data-sid="{{ sid }}"
+         data-auth="{{ 1 if current_user.is_authenticated else 0 }}">
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-body chat-window">
+        <div id="banner" class="alert alert-danger d-none"></div>
+
+        <div id="chat" class="chat-area">
+          <div class="msg bot">
+            Hi{% if current_user.is_authenticated %} {{ current_user.first_name }}{% endif %}, I’m <b>Mika</b> 👋
+            Tell me ingredients (e.g., <em>paneer and tomato, veg / non-veg, under 20 min</em>).
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <input id="msg" class="form-control" placeholder="Type your message..." autocomplete="off">
+          <button id="send" class="btn btn-primary">
+            <span id="sendText">Send</span>
+            <span id="sendSpinner" class="spinner-border spinner-border-sm d-none"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <small class="text-muted d-block mt-2">Session: <span id="sidLabel">{{ sid }}</span></small>
+  </section>
+</div>
+
+{% raw %}
+<script>
+(function(){
+  const root = document.getElementById("app-root");
+  const isAuth = root.dataset.auth === "1";
+  const newBtn = document.getElementById("newChat");
+  const chatPane = document.getElementById("chat");
+  const chatList = document.getElementById("chatList");
+  const guestList = document.getElementById("guestList");
+
+  function currentSid(){ return root.getAttribute("data-sid"); }
+  function setSid(sid){
+    root.setAttribute("data-sid", sid);
+    document.getElementById("sidLabel").textContent = sid;
+    chatPane.innerHTML = '<div class="msg bot">New chat started. Tell me ingredients!</div>';
+  }
+
+  // ===== Guest helpers (localStorage) =====
+  function gKey(sid){ return "mika_guest_"+sid; }
+
+  function loadGuestList(){
+    if (!guestList) return;
+    guestList.innerHTML = "";
+    Object.keys(localStorage)
+      .filter(k => k.startsWith("mika_guest_"))
+      .map(k => ({ sid: k.replace("mika_guest_",""), obj: JSON.parse(localStorage.getItem(k) || '{"title":"New chat","messages":[],"updated_at":0}') }))
+      .sort((a,b) => (b.obj.updated_at || 0) - (a.obj.updated_at || 0))
+      .forEach(({sid, obj})=>{
+        const a = document.createElement("a");
+        a.href = "#";
+        a.className = "list-group-item list-group-item-action";
+        a.dataset.sid = sid;
+        a.textContent = obj.title || "New chat";
+        guestList.appendChild(a);
+      });
+  }
+
+  function createGuestSession(){
+    const sid = crypto.randomUUID().replace(/-/g,'');
+    const now = Date.now();
+    localStorage.setItem(gKey(sid), JSON.stringify({ title: "New chat", messages: [], updated_at: now }));
+    loadGuestList();
+    setSid(sid);
+  }
+
+  function openGuestSession(sid){
+    setSid(sid);
+    const saved = JSON.parse(localStorage.getItem(gKey(sid)) || '{"messages":[]}');
+    chatPane.innerHTML = "";
+    (saved.messages || []).forEach(m=>{
+      const d = document.createElement("div");
+      d.className = "msg " + (m.role === "user" ? "user" : "bot");
+      d.textContent = m.content;
+      chatPane.appendChild(d);
+    });
+    chatPane.scrollTop = chatPane.scrollHeight;
+  }
+
+  function appendGuestMessage(sid, role, content){
+    const key = gKey(sid);
+    const saved = JSON.parse(localStorage.getItem(key) || '{"title":"New chat","messages":[],"updated_at":0}');
+    saved.messages.push({role, content});
+    if ((!saved.title || saved.title === "New chat") && role === "user" && content){
+      saved.title = content.slice(0, 40);
+    }
+    saved.updated_at = Date.now();
+    localStorage.setItem(key, JSON.stringify(saved));
+    loadGuestList();
+  }
+
+  // If your _chat_ui.html dispatches these events, we persist guest messages:
+  window.addEventListener("mika:message", (ev)=>{
+    if (isAuth) return;
+    const { sid, role, content } = ev.detail || {};
+    if (!sid || !content) return;
+    appendGuestMessage(sid, role, content);
+  });
+
+  // ===== Auth helpers (DB) =====
+  async function createServerSession(){
+    const sid = crypto.randomUUID().replace(/-/g,'');
+    const r = await fetch("/api/sessions", {
+      method:"POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ sid, title: "New chat" })
+    });
+    const data = await r.json();
+    if (data.ok){
+      const a = document.createElement("a");
+      a.href="#"; a.className="list-group-item list-group-item-action";
+      a.dataset.sid = sid; a.textContent = "New chat";
+      chatList.prepend(a);
+      setSid(sid);
+    }
+  }
+
+  async function openServerSession(sid){
+    const r = await fetch(`/api/sessions/${sid}/messages`);
+    const data = await r.json();
+    if (!data.ok) return;
+    setSid(sid);
+    chatPane.innerHTML = "";
+    data.messages.forEach(m=>{
+      const d = document.createElement("div");
+      d.className = "msg " + (m.role === "user" ? "user" : "bot");
+      d.textContent = m.content;
+      chatPane.appendChild(d);
+    });
+    chatPane.scrollTop = chatPane.scrollHeight;
+  }
+
+  // ===== Bindings =====
+  newBtn?.addEventListener("click", ()=> isAuth ? createServerSession() : createGuestSession());
+
+  chatList?.addEventListener("click", (e)=>{
+    const a = e.target.closest("[data-sid]");
+    if (!a) return;
+    e.preventDefault();
+    const sid = a.dataset.sid;
+    if (isAuth) openServerSession(sid);
+    else openGuestSession(sid);
+  });
+
+  if (!isAuth) loadGuestList();
+})();
+</script>
+{% endraw %}
+
+{# keep your full chat client with chips & close handling #}
+{% include "_chat_ui.html" %}
+{% endblock %}

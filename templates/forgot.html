@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body chat-window">
+        <h5 class="mb-3">Reset password</h5>
+        {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+
+        {% if not step %}
+          <form method="post" action="{{ url_for('forgot_post') }}" class="vstack gap-3">
+            <div>
+              <label class="form-label">Username or Email</label>
+              <input name="username_or_email" class="form-control" required>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button class="btn btn-primary" type="submit">Continue</button>
+            </div>
+          </form>
+        {% elif step == 'question' %}
+          <form method="post" action="{{ url_for('forgot_verify') }}" class="vstack gap-3">
+            <input type="hidden" name="who" value="{{ who }}">
+            <div>
+              <div class="mb-2 small text-muted">Security question</div>
+              <div class="p-2 rounded bg-light border">{{ question }}</div>
+            </div>
+            <div>
+              <label class="form-label">Your answer</label>
+              <input name="answer" class="form-control" required>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button class="btn btn-primary" type="submit">Verify</button>
+            </div>
+          </form>
+        {% elif step == 'reset' %}
+          <form method="post" action="{{ url_for('forgot_reset') }}" class="row g-3">
+            <input type="hidden" name="who" value="{{ who }}">
+            <div class="col-12">
+              <label class="form-label">New password</label>
+              <input name="password" type="password" class="form-control" required>
+              <div class="form-text">8–64 chars. Allowed: letters, numbers, @ # $ % ^ & + = ! . - _</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Confirm password</label>
+              <input name="confirm_password" type="password" class="form-control" required>
+            </div>
+            <div class="col-12 d-flex justify-content-end">
+              <button class="btn btn-primary" type="submit">Reset</button>
+            </div>
+          </form>
+        {% endif %}
+
+        <hr class="my-4">
+        <div class="small"><a href="{{ url_for('login') }}">Back to login</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

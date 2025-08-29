@@ -1,0 +1,175 @@
+{% raw %}
+<script>
+console.log("[Mika] chat UI (full) loaded");
+
+const root   = document.getElementById("app-root");
+const chat   = document.getElementById("chat");
+const input  = document.getElementById("msg");
+const sendBtn= document.getElementById("send");
+const sendText = document.getElementById("sendText");
+const sendSpinner = document.getElementById("sendSpinner");
+const banner = document.getElementById("banner");
+
+function getSid(){ return root?.getAttribute("data-sid") || ""; }
+
+function showBanner(msg){
+  if(!banner) return;
+  banner.textContent = msg;
+  banner.classList.remove("d-none");
+  setTimeout(()=>banner.classList.add("d-none"), 2500);
+}
+
+function addMsg(text, who){
+  const bubble = document.createElement("div");
+  bubble.className = "msg " + (who === "user" ? "user" : "bot");
+  if (who === "bot") {
+    try { bubble.innerHTML = marked.parse(text); } catch { bubble.textContent = text; }
+  } else {
+    bubble.textContent = text;
+  }
+  chat.appendChild(bubble);
+  chat.scrollTop = chat.scrollHeight;
+  return bubble;
+}
+
+function setLoading(isLoading){
+  if (!sendBtn) return;
+  sendBtn.disabled = !!isLoading;
+  if (sendText)    sendText.classList[isLoading ? "add" : "remove"]("d-none");
+  if (sendSpinner) sendSpinner.classList[isLoading ? "remove" : "add"]("d-none");
+}
+
+function endChatUI(){
+  if (input){
+    input.disabled = true;
+    input.value = "";
+    input.placeholder = "This chat is closed. Click New chat to start again.";
+  }
+  if (sendBtn) {
+    sendBtn.disabled = false;
+    if (sendText) sendText.textContent = "New chat";
+    sendBtn.onclick = () => window.location.reload();
+  }
+}
+
+function addCards(results){
+  if (!results || !results.length) return;
+  const wrap = document.createElement("div");
+  wrap.className = "row g-3 mt-1";
+  results.forEach(r=>{
+    const col = document.createElement("div");
+    col.className = "col-md-6";
+    const meta = [
+      r.time ? (r.time + " min") : null,
+      r.cuisine || null,
+      r.diet || null
+    ].filter(Boolean).join(" · ");
+    col.innerHTML = `
+      <div class="card recipe-card h-100 hoverable" data-title="${r.title}">
+        <div class="card-body">
+          <h6 class="card-title mb-1">${r.title}</h6>
+          <div class="text-muted small mb-2">${meta}</div>
+        </div>
+      </div>`;
+    col.querySelector(".recipe-card").addEventListener("click", ()=>sendMessage(r.title));
+    wrap.appendChild(col);
+  });
+  chat.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function addInlineConfirmChips(targetBubble){
+  if (!targetBubble) return;
+  const chips = document.createElement("div");
+  chips.className = "inline-actions";
+  chips.innerHTML = `
+    <button class="chip chip-primary">👍 Helpful</button>
+    <button class="chip">👎 Not helpful</button>
+    <button class="chip chip-ghost">Copy</button>
+  `;
+  const [btnYes, btnNo, btnCopy] = chips.querySelectorAll("button");
+
+  btnYes.addEventListener("click", ()=>{ addMsg("👍 Helpful", "user"); sendAction("yes"); });
+  btnNo .addEventListener("click", ()=>{ addMsg("👎 Not helpful", "user"); sendAction("no");  });
+
+  btnCopy.addEventListener("click", ()=>{
+    const text = targetBubble.innerText || targetBubble.textContent || "";
+    const ok = () => {
+      btnCopy.textContent = "✓ Copied";
+      btnCopy.classList.add("copied");
+      btnCopy.disabled = true;
+      setTimeout(()=>{ btnCopy.textContent="Copy"; btnCopy.classList.remove("copied"); btnCopy.disabled=false; }, 1100);
+    };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(ok).catch(()=>showBanner("Couldn’t copy."));
+    } else {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text; document.body.appendChild(ta);
+        ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+        ok();
+      } catch { showBanner("Couldn’t copy."); }
+    }
+  });
+
+  targetBubble.appendChild(chips);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function handleResponse(data){
+  const botBubble = addMsg(data.reply || "Sorry, something went wrong.", "bot");
+
+  // fire event after bot message
+  window.dispatchEvent(new CustomEvent("mika:message", {
+    detail: { sid: getSid(), role: "bot", content: data.reply || "" }
+  }));
+
+  if (data.results && data.results.length) addCards(data.results);
+  if (data.state && data.state.toLowerCase() === "confirm") addInlineConfirmChips(botBubble);
+  if (data.state && data.state.toLowerCase() === "closed")  endChatUI();
+}
+
+function sendMessage(textOverride){
+  const sid = getSid();
+  const text = (textOverride || input?.value || "").trim();
+  if (!text) return;
+  addMsg(text, "user");
+
+  // fire event after user message
+  window.dispatchEvent(new CustomEvent("mika:message", {
+    detail: { sid: getSid(), role: "user", content: text }
+  }));
+
+  if (input) input.value = "";
+  setLoading(true);
+  fetch("/chat", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ sid, message: text })
+  })
+  .then(r => { if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+  .then(handleResponse)
+  .catch(err => { console.error(err); showBanner("Network error."); addMsg("Network error. Is the Flask server running?","bot"); })
+  .finally(()=> setLoading(false));
+}
+
+function sendAction(text){
+  const sid = getSid();
+  setLoading(true);
+  fetch("/chat", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ sid, message: text })
+  })
+  .then(r => { if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+  .then(handleResponse)
+  .catch(err => { console.error(err); showBanner("Network error."); addMsg("Network error. Is the Flask server running?","bot"); })
+  .finally(()=> setLoading(false));
+}
+
+sendBtn?.addEventListener("click", ()=>sendMessage());
+input?.addEventListener("keydown", (e)=>{ if(e.key === "Enter"){ e.preventDefault(); sendMessage(); } });
+
+console.log("[Mika] chat UI ready");
+</script>
+{% endraw %}

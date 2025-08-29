@@ -1,4 +1,7 @@
 Flask
+flask_sqlalchemy
+flask_login
+Werkzeug>=2.3
 pandas
 scikit-learn
 numpy
